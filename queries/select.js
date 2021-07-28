@@ -11,7 +11,7 @@ export async function selectAccountCountByEmail(email) {
   const result = await query(`
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
 
-    SELECT (count(?account) as ?accounts) WHERE {
+    SELECT (count(?account) as ?accountCount) WHERE {
       GRAPH <http://mu.semte.ch/application> {
         ?account account:email ${sparqlEscapeString(email)}
       }
@@ -48,7 +48,7 @@ export async function selectAccountByEmail(email) {
  * @returns {accountId, accountUri} 
  */
 
-export async function selectAccountBySession(session_uri) {
+export async function selectAccountBySession(sessionUri) {
   const result = await query(`
     PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
     PREFIX session: <http://mu.semte.ch/vocabularies/session/>
@@ -56,10 +56,26 @@ export async function selectAccountBySession(session_uri) {
 
     SELECT ?accountUri WHERE {
       GRAPH <http://mu.semte.ch/application> {
-        ${sparqlEscapeUri(session_uri)} session:account ?accountUri .
+        ${sparqlEscapeUri(sessionUri)} session:account ?accountUri .
       }
       GRAPH <http://mu.semte.ch/application> {
         ?accountUri a foaf:OnlineAccount .
+      }
+    }
+  `)
+
+  return parseResults(result)
+}
+
+export async function selectPasswordhashByAccount(accountUri) {
+  const result = await query(`
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+    SELECT ?passwordhash WHERE {
+      GRAPH <http://mu.semte.ch/application> {
+        ${sparqlEscapeUri(accountUri)} a foaf:OnlineAccount ; 
+        account:password ?passwordhash . 
       }
     }
   `)
