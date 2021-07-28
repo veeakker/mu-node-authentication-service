@@ -39,11 +39,11 @@ export default async function login(req, res){
   });
   
   try {
-    var { accountUri, passwordHash } = await selectAccountByEmail(email);
+    var { accountUri, passwordHash = "" } = await selectAccountByEmail(email);
 
     const passwordMatches = await bcrypt.compare(password, passwordHash)
 
-    if (!accountUri || !passwordMatches) return res.status(400).json({
+    if (!accountUri || !passwordHash || !passwordMatches) return res.status(400).json({
       "errors": [
         {
           "status": "400",
@@ -51,11 +51,10 @@ export default async function login(req, res){
         }
       ]
     });
-
   } catch (err) {
     return res.status(500).send(err);
   }
-  
+
   createSession(accountUri, req.headers['mu-session-id']);
   const sessionId = req.headers['mu-session-id'].split('/').pop();
   const accountId = accountUri.split('/').pop();

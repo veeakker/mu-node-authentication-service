@@ -47,7 +47,7 @@ export default async function register(req, res){
     // Check if other accounts with this email exist in db
     const { accountCount } = await selectAccountCountByEmail(email)
 
-    if (accountCount != 0) {
+    if (parseInt(accountCount) != 0) {
       return res.status(400).json({
         "errors": [
           {

@@ -3,6 +3,8 @@ import register from './register';
 import login from './login';
 import current from './current';
 import logout from './logout';
+import deleteCurrentAccount from './deleteCurrentAccount';
+import changePassword from './changePassword';
 
 const router = express.Router();
 
@@ -24,14 +26,16 @@ router.use('*', (req, res, next) => {
         "detail": "mu-session-id header is missing'"
       }
     ]
-  })
-
-  next()
+  }) 
+  next();
 })
 
 router.post('/accounts', register);
 router.post('/sessions', login);
 router.get('/sessions/current', current);
 router.delete('/sessions/current', logout);
+router.delete('/accounts/current', deleteCurrentAccount);
+router.patch('/accounts/current/changePassword', changePassword)
+
 
 export default router;
