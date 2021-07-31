@@ -6,8 +6,7 @@ import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
  * @param {string} sessionUri 
  */
 export async function deleteSession(sessionUri, accountUri) {
-  try {
-  await update(`
+  return update(`
     PREFIX session: <http://mu.semte.ch/vocabularies/session/>
 
     DELETE {
@@ -20,16 +19,13 @@ export async function deleteSession(sessionUri, accountUri) {
         ${sparqlEscapeUri(sessionUri)} session:account ${sparqlEscapeUri(accountUri)}.
       }
     }
-  `)
-  } catch (err){
-    console.log(err)
-  }
+  `);
 }
 
 /**
  * @param {string} sessionUri 
  */
- export async function deleteAccount(accountUri) {
+export async function deleteAccount(accountUri) {
     const result = await update(`
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
@@ -46,6 +42,6 @@ export async function deleteSession(sessionUri, accountUri) {
           BIND(${sparqlEscapeUri(accountUri)} AS ?accountUri) .
         }
       }
-    `)
-    return result
+    `);
+    return result;
 }

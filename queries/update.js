@@ -1,10 +1,9 @@
 import { updateSudo as update } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeUri, sparqlEscapeString } from 'mu';
-import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
+import { ACCOUNTS_GRAPH } from '../config';
 
-export async function updatePasswordHashByAccount(accountUri, newPasswordHash) {
-  try {
-  return await update(`
+export function updatePasswordHashByAccount(accountUri, newPasswordHash) {
+  return update(`
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>  
 
     DELETE {
@@ -14,7 +13,7 @@ export async function updatePasswordHashByAccount(accountUri, newPasswordHash) {
     }
     INSERT {
       GRAPH <${ACCOUNTS_GRAPH}> {
-        ${sparqlEscapeUri(accountUri)} account:password ${sparqlEscapeUri(newPasswordHash)}.
+        ${sparqlEscapeUri(accountUri)} account:password ${sparqlEscapeString(newPasswordHash)}.
       }
     }
     WHERE {
@@ -22,8 +21,5 @@ export async function updatePasswordHashByAccount(accountUri, newPasswordHash) {
         ${sparqlEscapeUri(accountUri)} account:password ?passwordHash.
       }
     }
-  `)
-  } catch (err){
-    console.log(err)
-  }
+  `);
 }
