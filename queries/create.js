@@ -1,6 +1,7 @@
 import { updateSudo as update } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
 import parseResults from '../utils/parse-results';
+import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
 
 export async function createAccount(email, passwordHash, personId, accountId) {
   const now = new Date().toISOString();
@@ -15,7 +16,7 @@ export async function createAccount(email, passwordHash, personId, accountId) {
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 
   INSERT DATA {
-    GRAPH <http://mu.semte.ch/application> {
+    GRAPH <${ACCOUNTS_GRAPH}> {
       ${sparqlEscapeUri(personUri)} a foaf:Person;
                                 mu:uuid ${sparqlEscapeString(personId)};  
                                 dc:created ${sparqlEscapeDateTime(now)};
@@ -42,7 +43,7 @@ export async function createSession(account_uri, session_uri) {
     PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 
     INSERT DATA {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${SESSIONS_GRAPH}> {
         ${sparqlEscapeUri(session_uri)} session:account ${sparqlEscapeUri(account_uri)};
               mu:uuid ${sparqlEscapeString(session_id)}.
       }

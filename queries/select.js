@@ -1,6 +1,7 @@
 import { querySudo as query } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeUri, uuid } from 'mu';
 import parseResults from '../utils/parse-results';
+import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
 
 /**
  * @param {string} email 
@@ -12,7 +13,7 @@ export async function selectAccountCountByEmail(email) {
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
 
     SELECT (count(?account) as ?accountCount) WHERE {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${ACCOUNTS_GRAPH}> {
         ?account account:email ${sparqlEscapeString(email)}
       }
     }
@@ -32,7 +33,7 @@ export async function selectAccountByEmail(email) {
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
 
     SELECT ?accountUri ?passwordHash WHERE {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${ACCOUNTS_GRAPH}> {
         ?accountUri a foaf:OnlineAccount;
                 account:email ${sparqlEscapeString(email)};
                 account:password ?passwordHash.
@@ -55,10 +56,10 @@ export async function selectAccountBySession(sessionUri) {
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
     SELECT ?accountUri WHERE {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${SESSIONS_GRAPH}> {
         ${sparqlEscapeUri(sessionUri)} session:account ?accountUri .
       }
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${ACCOUNTS_GRAPH}> {
         ?accountUri a foaf:OnlineAccount .
       }
     }
@@ -73,7 +74,7 @@ export async function selectPasswordhashByAccount(accountUri) {
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
     SELECT ?passwordhash WHERE {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <${ACCOUNTS_GRAPH}> {
         ${sparqlEscapeUri(accountUri)} a foaf:OnlineAccount ; 
         account:password ?passwordhash . 
       }

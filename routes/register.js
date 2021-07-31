@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { uuid } from 'mu';
 import { selectAccountCountByEmail } from "../queries/select";
 import { createAccount } from "../queries/create";
+import { HASH_STRENGTH } from '../config';
 
 const validEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -60,7 +61,7 @@ export default async function register(req, res){
 
     const personId = uuid();
     const accountId = uuid();
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, HASH_STRENGTH);
 
     //Create the new account
     await createAccount(email, passwordHash, personId, accountId);

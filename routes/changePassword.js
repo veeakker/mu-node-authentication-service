@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { HASH_STRENGTH } from '../config';
 import { selectAccountBySession, selectPasswordhashByAccount } from '../queries/select';
 import { updatePasswordHashByAccount } from '../queries/update';
 
@@ -31,7 +32,7 @@ export default async function changePassword(req, res) {
         ]
       });
     }
-    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    const newPasswordHash = await bcrypt.hash(newPassword, HASH_STRENGTH);
     await updatePasswordHashByAccount(accountUri, newPasswordHash);
     console.log(newPasswordHash, passwordhash)
     
