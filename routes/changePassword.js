@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { HASH_STRENGTH } from '../config';
 import { selectAccountBySession, selectPasswordhashByAccount } from '../queries/select';
 import { updatePasswordHashByAccount } from '../queries/update';
+import parseResults from '../utils/parse-results';
 
 export default async function changePassword(req, res) {
   const { data: { attributes: { currentPassword, newPassword } } } = req.body;
@@ -15,11 +16,18 @@ export default async function changePassword(req, res) {
     ]
   });
 
-  const sessionUri = req.headers['mu-session-id']
+  const sessionUri = req.headers['mu-session-id'];
 
   try {
-    const { accountUri } = await selectAccountBySession(sessionUri);
-    const { passwordhash } = await selectPasswordhashByAccount(accountUri);
+    // find accountURI for this session
+    const accountResult = await selectAccountBySession(sessionUri);
+    const { accountUri } = parseResults(accountResult);
+
+    // find currentPasswordHash by accountURI
+    const passwordResult = await selectPasswordhashByAccount(accountUri);
+    const { passwordhash } = parseResults(passwordResult);
+    
+    // Check if current and given password matches
     const passwordsMatch = await bcrypt.compare(currentPassword, passwordhash);
 
     if(!passwordsMatch) {
@@ -32,13 +40,13 @@ export default async function changePassword(req, res) {
         ]
       });
     }
+    
+    // Update new password in db
     const newPasswordHash = await bcrypt.hash(newPassword, HASH_STRENGTH);
     await updatePasswordHashByAccount(accountUri, newPasswordHash);
-    console.log(newPasswordHash, passwordhash)
-    
-  } catch (err) {
-    return res.status(500).send(err);
-  }
 
-  res.sendStatus(204)
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.sendStatus(500);
+  }
 }
