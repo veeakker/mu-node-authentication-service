@@ -27,14 +27,14 @@
 - :o: Semantic.works ready
 - :computer: Written 100% in Javascript
 
-## :open_book: Documentation
+# :open_book: Documentation
 
-### Description
+## Description
 This service makes it easy to quickly setup an application where users can register and login to their account. It is made with the semantic.works framework in mind. The service is kept simple so you can easily extend it with your own functionality like 2FA. Tutorials on how to add add certain functionality will be made available in this repo's wiki in the near future. 
 
-### Getting Started
+## Getting Started
 
-#### Add to your semantic.works stack
+### Add to your semantic.works stack
 - Add the following service to your docker-compose.yml file: 
 ```yml
   authentication: 
@@ -73,7 +73,7 @@ This service makes it easy to quickly setup an application where users can regis
 - When that is done, run `docker-compose up -d`
 If you set this up locally then by default your app will be made available on `http://localhost:80`
 
-#### Frontend - EmberJS
+### Frontend - EmberJS
 If you use semantic.works then it does not really matter which frontend framework you use but for this Getting Started we will be using EmberJS as a template has already been build and is ready to be used.
 
 - Clone the following EmberJS frontend https://github.com/aatauil/ember-mu-auth-boilerplate
