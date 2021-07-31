@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/52280338/125530565-b1091948-8767-402d-92e4-0c4e83e15f67.png" alt="mu-node-authentication" />
+    <img src="https://user-images.githubusercontent.com/52280338/127743566-8a3746ea-8116-40a7-9f8c-51a20259d27f.png" alt="mu-node-authentication" />
 </p>
 <h1 align="center">mu-node-authentication-service</h1>
 <h2 align="center">Authentication service for Semantic.Works</h2>
