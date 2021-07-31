@@ -14,11 +14,14 @@
 
 ---
 
-## Core Features:
+## Functionality:
 
 - :writing_hand: Registration
 - :red_haired_man: Login 
 - :key: Change password
+
+## Core Features:
+
 - :page_with_curl: JSON:API compliant
 - :gear: Customizable with decent defaults
 - :chains: Compatible with virtuoso
