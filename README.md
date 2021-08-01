@@ -39,6 +39,10 @@ This service makes it easy to quickly setup an application where users can regis
 ```yml
   authentication: 
     image: mu-node-authentication-service
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
 ```
 - Add the following routes to your **config/dispatcher/dispatcher.ex** file: 
 ```elixir
@@ -66,10 +70,16 @@ This service makes it easy to quickly setup an application where users can regis
       :resource-base (s-url "http://mu.semte.ch/vocabularies/accounts/")
       :on-path "accounts")
 ```
-- In your **config/resources/repository.lisp** file, add the following prefix <br>
- `(add-prefix "account" "http://mu.semte.ch/vocabularies/account/")`
+- In your **config/resources/repository.lisp** file, add the following prefixes
+ ```lisp
+    (add-prefix "foaf" "http://xmlns.com/foaf/0.1/")
+    (add-prefix "account" "http://mu.semte.ch/vocabularies/account/")
+```
+
 - Finally add the following line to your **config/resources/domain.lisp** file
-`(read-domain-file "master-account-domain.lisp")`
+```
+    (read-domain-file "master-account-domain.lisp")
+```
 - When that is done, run `docker-compose up -d`
 If you set this up locally then by default your app will be made available on `http://localhost:80`
 
@@ -84,16 +94,54 @@ More information about the frontend can be found in the [README](https://github.
 
 ---
 
-**Note** <br>
-The url entered after `--proxy` in the serve step needs to point to your backend in case you did not use the premade backend mentioned above.
+<sub>**Note** <br>
+The url entered after `--proxy` in the serve step needs to point to your backend in case you did not use the premade backend mentioned above.<sub>
   
 ---
+## Environment variables
+| ENV  | Description | default | required |
+|---|---|---|---|
+| SESSIONS_GRAPH | Graph where session related information will be stored in. | `http://mu.semte.ch/application` |
+| ACCOUNTS_GRAPH | Graph where account related information will be stored in.  | `http://mu.semte.ch/application` |   |
+| HASH_STRENGTH |  The salt to be used to hash the password. [Learn more](https://github.com/kelektiv/node.bcrypt.js#api) | 12 |  |
 
-## :orange_heart: Contributing
+## Development
+This image uses the [mu-javascript-template](https://github.com/mu-semtech/mu-javascript-template) as base image (see Dockerfile). Therefor all functions and environment variables that the mu-javascript-template provides are also available in this image. Its highly advisable to read through the readme of the mu-javascript-template as it will show you how to setup a development environment where you can take advatage of logging, debugging, live reload and many functions.
+<br><br>
+Quick example on how your docker-compose.yml file for this service will look like in development mode:
+```yml
+    authentication:
+      image: mu-node-authentication-service
+      ports:
+        - 8888:80
+        - 9229:9229
+      environment:
+        NODE_ENV: "development"
+      links:
+        - db:virtuoso
+      volumes:
+        - /path/to/local/cloned/mu-node-authentication-service/folder/:/app/
+      labels:
+        - "logging=true"
+      restart: always
+      logging: *default-logging
+```
+
+---
+
+<sub>**Note** <br>
+When using mu-authorization, you probably will want your requests to go through there first instead of straight to 'virtuoso'. In the yaml file above we see that 'db' is linked directly to 'virtuoso'. Change this to the name of the authorization service (e.g. database) if you need it to go through mu-authorization first.</sub>
+```
+      links:
+        - db:database
+``` 
+  
+---
+# :orange_heart: Contributing
 
 Everyone can open an issue or send in a pull request.
 
 
-## 📝 License
+# 📝 License
 
 This project is [MIT](LICENSE) licensed.
