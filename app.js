@@ -37,8 +37,3 @@ app.delete('/accounts/current', deleteCurrentAccount);
 app.patch('/accounts/current/changePassword', changePassword);
 
 app.use(errorHandler);
-
-process.on('unhandledRejection', (reason, p) => {
-  // application specific logging, throwing an error, or other logic here
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason); 
-});
