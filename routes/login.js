@@ -9,7 +9,7 @@ export default async function login(req, res){
   const { data: { attributes: { email, password } } } = req.body;
 
   /**
-   * VALIDATIONS -> HasEmail, IsValidEmail, HasPassword
+   * REQUEST VALIDATION -> HasEmail, IsValidEmail, HasPassword
    */
 
   if (!email) return res.status(400).json({
@@ -40,7 +40,7 @@ export default async function login(req, res){
   });
   
   // find accountUri & passwordHash by given email
-  // passwordHash set to empty string by default for bcrypt to process
+  // note: passwordHash set to empty string by default for bcrypt to process
   const result = await selectAccountByEmail(email);
   const { accountUri, passwordHash = "" } = parseResults(result);
   const passwordMatches = await bcrypt.compare(password, passwordHash);
@@ -55,6 +55,7 @@ export default async function login(req, res){
     ]
   });
 
+  //Create new session in db
   await createSession(accountUri, req.headers['mu-session-id']);
   
   const sessionId = req.headers['mu-session-id'].split('/').pop();

@@ -11,7 +11,7 @@ export default async function register(req, res){
   const { data: { attributes: { email, password } } } = req.body;
 
   /**
-   * VALIDATIONS -> HasEmail, IsValidEmail, HasPassword
+   * REQUEST VALIDATION  -> HasEmail, IsValidEmail, HasPassword
    */
 
   if (!email) return res.status(400).json({
