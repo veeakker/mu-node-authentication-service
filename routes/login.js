@@ -39,49 +39,45 @@ export default async function login(req, res){
     ]
   });
   
-  try {
-    // find accountUri & passwordHash by given email
-    // passwordHash set to empty string by default for bcrypt to process
-    const result = await selectAccountByEmail(email);
-    const { accountUri, passwordHash = "" } = parseResults(result);
-    const passwordMatches = await bcrypt.compare(password, passwordHash);
+  // find accountUri & passwordHash by given email
+  // passwordHash set to empty string by default for bcrypt to process
+  const result = await selectAccountByEmail(email);
+  const { accountUri, passwordHash = "" } = parseResults(result);
+  const passwordMatches = await bcrypt.compare(password, passwordHash);
 
-    // Return 400 if accountURI does not exist, no passwordHash is found or password does not match
-    if (!accountUri || !passwordHash || !passwordMatches) return res.status(400).json({
-      "errors": [
-        {
-          "status": "400",
-          "detail": "Given email or password is incorrect"
-        }
-      ]
-    });
+  // Return 400 if accountURI does not exist, no passwordHash is found or password does not match
+  if (!accountUri || !passwordHash || !passwordMatches) return res.status(400).json({
+    "errors": [
+      {
+        "status": "400",
+        "detail": "Given email or password is incorrect"
+      }
+    ]
+  });
 
-    await createSession(accountUri, req.headers['mu-session-id']);
-    
-    const sessionId = req.headers['mu-session-id'].split('/').pop();
-    const accountId = accountUri.split('/').pop();
+  await createSession(accountUri, req.headers['mu-session-id']);
+  
+  const sessionId = req.headers['mu-session-id'].split('/').pop();
+  const accountId = accountUri.split('/').pop();
 
-    return res.status(201).json({
-      links: {
-        self: req.headers['x-rewrite-url'] + '/' + accountId
-      },
-      data: {
-        type: 'sessions',
-        id: sessionId,
-      },
-      relationships: {
-        account: {
-          links: {
-            related: `/accounts/${accountId}`
-          },
-          data: {
-            type: "accounts",
-            id: accountId
-          }
+  return res.status(201).json({
+    links: {
+      self: req.headers['x-rewrite-url'] + '/' + accountId
+    },
+    data: {
+      type: 'sessions',
+      id: sessionId,
+    },
+    relationships: {
+      account: {
+        links: {
+          related: `/accounts/${accountId}`
+        },
+        data: {
+          type: "accounts",
+          id: accountId
         }
       }
-    });
-  } catch (err) {
-    return res.sendStatus(500);
-  }
+    }
+  });
 }

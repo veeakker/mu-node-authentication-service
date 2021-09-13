@@ -18,35 +18,31 @@ export default async function changePassword(req, res) {
 
   const sessionUri = req.headers['mu-session-id'];
 
-  try {
-    // find accountURI for this session
-    const accountResult = await selectAccountBySession(sessionUri);
-    const { accountUri } = parseResults(accountResult);
+  // find accountURI for this session
+  const accountResult = await selectAccountBySession(sessionUri);
+  const { accountUri } = parseResults(accountResult);
 
-    // find currentPasswordHash by accountURI
-    const passwordResult = await selectPasswordhashByAccount(accountUri);
-    const { passwordhash } = parseResults(passwordResult);
-    
-    // Check if current and given password matches
-    const passwordsMatch = await bcrypt.compare(currentPassword, passwordhash);
+  // find currentPasswordHash by accountURI
+  const passwordResult = await selectPasswordhashByAccount(accountUri);
+  const { passwordhash } = parseResults(passwordResult);
+  
+  // Check if current and given password matches
+  const passwordsMatch = await bcrypt.compare(currentPassword, passwordhash);
 
-    if(!passwordsMatch) {
-      return res.status(400).json({
-        "errors": [
-          {
-            "status": "400",
-            "detail": "New password does not match current one"
-          }
-        ]
-      });
-    }
-    
-    // Update new password in db
-    const newPasswordHash = await bcrypt.hash(newPassword, HASH_STRENGTH);
-    await updatePasswordHashByAccount(accountUri, newPasswordHash);
-
-    return res.sendStatus(204);
-  } catch (err) {
-    return res.sendStatus(500);
+  if(!passwordsMatch) {
+    return res.status(400).json({
+      "errors": [
+        {
+          "status": "400",
+          "detail": "New password does not match current one"
+        }
+      ]
+    });
   }
+  
+  // Update new password in db
+  const newPasswordHash = await bcrypt.hash(newPassword, HASH_STRENGTH);
+  await updatePasswordHashByAccount(accountUri, newPasswordHash);
+
+  return res.sendStatus(204);
 }
