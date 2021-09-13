@@ -11,7 +11,7 @@ export default async function changePassword(req, res) {
     "errors": [
       {
         "status": "400",
-        "detail": "A new password is required"
+        "title": "A new password is required"
       }
     ]
   });
@@ -34,7 +34,7 @@ export default async function changePassword(req, res) {
       "errors": [
         {
           "status": "400",
-          "detail": "New password does not match current one"
+          "title": "New password does not match current one"
         }
       ]
     });

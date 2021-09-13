@@ -18,7 +18,7 @@ export default async function register(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Email address is required"
+        "title": "Email address is required"
       }
     ]
   });
@@ -27,7 +27,7 @@ export default async function register(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Email address must be valid"
+        "title": "Email address must be valid"
       }
     ]
   });
@@ -36,7 +36,7 @@ export default async function register(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Password is required"
+        "title": "Password is required"
       }
     ]
   });
@@ -50,7 +50,7 @@ export default async function register(req, res){
       "errors": [
         {
           "status": "400",
-          "detail": "An account with this email already exists"
+          "title": "An account with this email already exists"
         }
       ]
     });

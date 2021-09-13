@@ -12,7 +12,7 @@ export default async function current(req, res) {
     "errors": [
       {
         "status": "400",
-        "detail": "Invalid Session"
+        "title": "Invalid Session"
       }
     ]
   });

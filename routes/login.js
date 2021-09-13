@@ -16,7 +16,7 @@ export default async function login(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Email address is required"
+        "title": "Email address is required"
       }
     ]
   });
@@ -25,7 +25,7 @@ export default async function login(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Email address must be valid"
+        "title": "Email address must be valid"
       }
     ]
   });
@@ -34,7 +34,7 @@ export default async function login(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Password is required"
+        "title": "Password is required"
       }
     ]
   });
@@ -50,7 +50,7 @@ export default async function login(req, res){
     "errors": [
       {
         "status": "400",
-        "detail": "Given email or password is incorrect"
+        "title": "Given email or password is incorrect"
       }
     ]
   });
