@@ -1,4 +1,4 @@
-import { app, errorHandler } from 'mu';
+import { app } from 'mu';
 import login from './routes/login';
 import register from './routes/register';
 import current from './routes/current';
@@ -28,12 +28,27 @@ app.use('*', (req, res, next) => {
   next();
 });
 
-app.post('/sessions', login);
-app.post('/accounts', register);
-app.post('/sessions', login);
-app.get('/sessions/current', current);
-app.delete('/sessions/current', logout);
-app.delete('/accounts/current', deleteCurrentAccount);
-app.patch('/accounts/current/changePassword', changePassword);
 
-app.use(errorHandler);
+/**
+ *  Higher order caller function for global error handling. 
+ *  this will catch errors, alternative for try/catch
+*/
+const use = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+app.post('/sessions', use(login));
+app.post('/accounts', use(register));
+app.post('/sessions', use(login));
+app.get('/sessions/current', use(current));
+app.delete('/sessions/current', use(logout));
+app.delete('/accounts/current', use(deleteCurrentAccount));
+app.patch('/accounts/current/changePassword', use(changePassword));
+
+// Error handling middleware
+app.use(function(err, req, res, next){
+  console.log(err);
+  res.status(500).json({
+    errors: [{ title: "Something went wrong" }]
+  });
+});
