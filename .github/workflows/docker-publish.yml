@@ -40,4 +40,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: aatauil/mu-node-authentication-service:${{steps.current-tag.non-prefixed}}
+          tags: aatauil/mu-node-authentication-service:${{steps.current-tag.outputs.non-prefixed}}
