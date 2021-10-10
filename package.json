@@ -1,0 +1,19 @@
+{
+  "name": "mu-node-authentication-service",
+  "version": "0.0.1",
+  "description": "mu-node-authentication-service",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@lblod/mu-auth-sudo": "^0.2.0",
+    "bcrypt": "^5.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
