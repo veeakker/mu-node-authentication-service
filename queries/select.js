@@ -29,11 +29,12 @@ export function selectAccountByEmail(email) {
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
 
-    SELECT ?accountUri ?passwordHash WHERE {
+    SELECT ?accountUri ?passwordHash ?status WHERE {
       GRAPH <${ACCOUNTS_GRAPH}> {
         ?accountUri a foaf:OnlineAccount;
                 account:email ${sparqlEscapeString(email)};
-                account:password ?passwordHash.
+                account:password ?passwordHash;
+                account:status ?status.
       }
     }
   `);
