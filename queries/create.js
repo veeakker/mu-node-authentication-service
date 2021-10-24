@@ -1,6 +1,6 @@
 import { updateSudo as update } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
-import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
+import { SESSIONS_GRAPH, ACCOUNTS_GRAPH, ACCOUNT_ACTIVE_STATUS } from '../config';
 
 export function createAccount(email, passwordHash, personId, accountId) {
   const now = new Date().toISOString();
@@ -25,6 +25,7 @@ export function createAccount(email, passwordHash, personId, accountId) {
                                   mu:uuid ${sparqlEscapeString(accountId)};  
                                   account:email ${sparqlEscapeString(email)};  
                                   account:password ${sparqlEscapeString(passwordHash)};
+                                  account:status ${sparqlEscapeUri(ACCOUNT_ACTIVE_STATUS)};
                                   dc:created ${sparqlEscapeDateTime(now)};
                                   dc:modified ${sparqlEscapeDateTime(now)}.
       }
