@@ -41,7 +41,7 @@ This service makes it easy to quickly setup an application where users can regis
 - Add the following service to your docker-compose.yml file: 
 ```yml
   authentication: 
-    image: mu-node-authentication-service
+    image: aatauil/mu-node-authentication-service
     labels:
       - "logging=true"
     restart: always
@@ -114,14 +114,14 @@ This image uses the [mu-javascript-template](https://github.com/mu-semtech/mu-ja
 Quick example on how your docker-compose.yml file for this service will look like in development mode:
 ```yml
     authentication:
-      image: mu-node-authentication-service
+      image: aatauil/mu-node-authentication-service
       ports:
         - 8888:80
         - 9229:9229
       environment:
         NODE_ENV: "development"
       links:
-        - db:virtuoso
+        - virtuoso:db
       volumes:
         - /path/to/local/cloned/mu-node-authentication-service/folder/:/app/
       labels:
@@ -136,7 +136,7 @@ Quick example on how your docker-compose.yml file for this service will look lik
 When using mu-authorization, you probably will want your requests to go through there first instead of straight to 'virtuoso'. In the yaml file above we see that 'db' is linked directly to 'virtuoso'. Change this to the name of the authorization service (e.g. database) if you need it to go through mu-authorization first.</sub>
 ```
       links:
-        - db:database
+        - database:db
 ``` 
   
 ---
