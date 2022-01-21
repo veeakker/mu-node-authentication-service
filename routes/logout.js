@@ -15,6 +15,7 @@ export default async function logout(req, res){
     await deleteSession(sessionUri, accountUri);
   }
 
+  res.set('mu-auth-allowed-groups', 'CLEAR');
   return res.sendStatus(204);
 }
 

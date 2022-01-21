@@ -71,7 +71,8 @@ export default async function login(req, res){
   
   const sessionId = req.headers['mu-session-id'].split('/').pop();
   const accountId = accountUri.split('/').pop();
-
+  
+  res.set('mu-auth-allowed-groups', 'CLEAR');
   return res.status(201).json({
     links: {
       self: req.headers['x-rewrite-url'] + '/' + accountId
