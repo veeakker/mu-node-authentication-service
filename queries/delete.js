@@ -1,6 +1,5 @@
 import { updateSudo as update } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeUri } from 'mu';
-import { SESSIONS_GRAPH } from '../config';
 
 /**
  * @param {string} sessionUri 
@@ -8,16 +7,17 @@ import { SESSIONS_GRAPH } from '../config';
 export async function deleteSession(sessionUri, accountUri) {
   return update(`
     PREFIX session: <http://mu.semte.ch/vocabularies/session/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
     DELETE {
-      GRAPH <${SESSIONS_GRAPH}> {
+      GRAPH ?graph {
         ${sparqlEscapeUri(sessionUri)} session:account ${sparqlEscapeUri(accountUri)}.
       }
-    }
-    WHERE {
-      GRAPH <${SESSIONS_GRAPH}> {
-        ${sparqlEscapeUri(sessionUri)} session:account ${sparqlEscapeUri(accountUri)}.
+    } WHERE {
+      GRAPH ?graph {
+        ?graph veeakker:graphBelongsToUser ?personUri.
+        ?personUri foaf:account ${sparqlEscapeUri(accountUri)}.
       }
-    }
-  `);
+    }`);
 }

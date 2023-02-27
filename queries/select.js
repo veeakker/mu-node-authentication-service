@@ -1,6 +1,5 @@
 import { querySudo as query } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeUri } from 'mu';
-import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
 
 /**
  * @param {string} email 
@@ -10,10 +9,11 @@ import { SESSIONS_GRAPH, ACCOUNTS_GRAPH } from '../config';
 export function selectAccountCountByEmail(email) {
   return query(`
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
     SELECT (count(?account) as ?accountCount) WHERE {
-      GRAPH <${ACCOUNTS_GRAPH}> {
-        ?account account:email ${sparqlEscapeString(email)}
+      GRAPH ?userGraph {
+        ?graph veeakker:graphsBelongsToUser/foaf:account/account:email ${sparqlEscapeString(email)}.
       }
     }
   `);
@@ -28,16 +28,18 @@ export function selectAccountByEmail(email) {
   return query(`
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
     SELECT ?accountUri ?passwordHash ?status WHERE {
-      GRAPH <${ACCOUNTS_GRAPH}> {
-        ?accountUri a foaf:OnlineAccount;
-                account:email ${sparqlEscapeString(email)};
-                account:password ?passwordHash;
-                account:status ?status.
+      GRAPH ?userGraph {
+        ?userGraph veeakker:graphBelongsToUser/foaf:account ?accountUri.
+        ?accountUri
+          a foaf:OnlineAccount;
+          account:email ${sparqlEscapeString(email)};
+          account:password ?passwordHash;
+          account:status ?status.
       }
-    }
-  `);
+    }`);
 }
 
 /**
@@ -49,16 +51,15 @@ export function selectAccountBySession(sessionUri) {
   return query(`
     PREFIX session: <http://mu.semte.ch/vocabularies/session/>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
     SELECT ?accountUri WHERE {
-      GRAPH <${SESSIONS_GRAPH}> {
-        ${sparqlEscapeUri(sessionUri)} session:account ?accountUri .
-      }
-      GRAPH <${ACCOUNTS_GRAPH}> {
+      GRAPH ?userGraph {
+        ?userGraph veeakker:graphBelongsToUser/foaf:account ?accountUri.
+        ${sparqlEscapeUri(sessionUri)} session:account ?accountUri.
         ?accountUri a foaf:OnlineAccount .
       }
-    }
-  `);
+    }`);
 }
 
 /**
@@ -70,11 +71,14 @@ export function selectPasswordhashByAccount(accountUri) {
   return query(`
     PREFIX account: <http://mu.semte.ch/vocabularies/account/>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
     SELECT ?passwordhash WHERE {
-      GRAPH <${ACCOUNTS_GRAPH}> {
-        ${sparqlEscapeUri(accountUri)} a foaf:OnlineAccount ; 
-                                        account:password ?passwordhash . 
+      GRAPH ?userGraph {
+        ?userGraph veeakker:graphBelongsToUser/foaf:account ${sparqlEscapeUri(accountUri)}.
+        ${sparqlEscapeUri(accountUri)}
+          a foaf:OnlineAccount ; 
+          account:password ?passwordhash.
       }
     }
   `);
