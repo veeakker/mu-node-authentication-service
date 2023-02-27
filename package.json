@@ -1,6 +1,6 @@
 {
   "name": "mu-node-authentication-service",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "mu-node-authentication-service",
   "main": "app.js",
   "scripts": {
