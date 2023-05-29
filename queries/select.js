@@ -13,7 +13,7 @@ export function selectAccountCountByEmail(email) {
 
     SELECT (count(?account) as ?accountCount) WHERE {
       GRAPH ?userGraph {
-        ?graph veeakker:graphsBelongsToUser/foaf:account/account:email ${sparqlEscapeString(email)}.
+        ?graph veeakker:graphBelongsToUser/foaf:account/account:email ${sparqlEscapeString(email)}.
       }
     }
   `);
