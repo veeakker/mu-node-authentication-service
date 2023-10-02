@@ -58,3 +58,42 @@ export function updateAccountStatus(accountUri, statusUri) {
     }
   `);
 }
+
+export async function updatePerson( graph, {id, email, phone, firstName, lastName }) {
+  return update(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX schema: <http://schema.org/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
+
+    DELETE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ${sparqlEscapeUri(graph)}
+           foaf:firstName ?firstName;
+           foaf:lastName ?lastName;
+           foaf:email ?email;
+           foaf:phone ?phone.
+      }
+    } INSERT {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ${sparqlEscapeUri(graph)}
+           foaf:firstName ${sparqlEscapeString(firstName)};
+           foaf:lastName ${sparqlEscapeString(lastName)};
+           foaf:email ${sparqlEscapeString(email)};
+           foaf:phone ${sparqlEscapeString(phone)}.
+      }
+    } WHERE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ${sparqlEscapeUri(graph)}
+           a foaf:Person;
+           mu:uuid ${sparqlEscapeString(id)};
+           schema:postalAddress ?postalAddress;
+           foaf:firstName ?firstName;
+           foaf:lastName ?lastName;
+           foaf:email ?email;
+           foaf:phone ?phone.
+      }
+    }`);
+}

@@ -121,3 +121,23 @@ export function selectAccountInfo(userGraph) {
       }
     } LIMIT 1`);
 }
+
+export function countMatchingPeopleForPersonId({graph, id}) {
+  return query(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX schema: <http://schema.org/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
+
+    SELECT (COUNT (?person) AS ?matchingUserCount)
+    WHERE {
+      VALUES ?person { ${sparqlEscapeUri(graph)} }
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?person
+           a foaf:Person;
+           mu:uuid ${sparqlEscapeString(id)}.
+      }
+    }`);
+}

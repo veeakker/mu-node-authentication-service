@@ -1,6 +1,7 @@
 import { app } from 'mu';
 import login from './routes/login';
 import register from './routes/register';
+import { updatePerson } from './routes/update';
 import current from './routes/current';
 import logout from './routes/logout';
 import deleteCurrentAccount from './routes/deleteCurrentAccount';
@@ -37,6 +38,7 @@ const use = fn => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
+app.patch('/people/*', use(updatePerson));
 app.post('/sessions', use(login));
 app.post('/accounts', use(register));
 app.post('/sessions', use(login));
