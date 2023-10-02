@@ -53,7 +53,7 @@ export function selectAccountBySession(sessionUri) {
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
 
-    SELECT ?accountUri WHERE {
+    SELECT ?accountUri ?userGraph WHERE {
       GRAPH ?userGraph {
         ?userGraph veeakker:graphBelongsToUser/foaf:account ?accountUri.
         ${sparqlEscapeUri(sessionUri)} session:account ?accountUri.
@@ -82,4 +82,42 @@ export function selectPasswordhashByAccount(accountUri) {
       }
     }
   `);
+}
+
+export function selectAccountInfo(userGraph) {
+  return query(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX schema: <http://schema.org/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
+
+    SELECT *
+    WHERE {
+      GRAPH ${sparqlEscapeUri(userGraph)} {
+        ${sparqlEscapeUri(userGraph)}
+           a foaf:Person;
+           mu:uuid ?personUuid;
+           foaf:account ?account;
+           schema:postalAddress ?postalAddress;
+           foaf:firstName ?firstName;
+           foaf:lastName ?lastName;
+           foaf:email ?email;
+           foaf:phone ?phone.
+
+        ?account
+           a foaf:OnlineAccount;
+           mu:uuid ?accountUuid;
+           account:email ?email.
+
+        ?postalAddress
+           a schema:PostalAddress;
+           mu:uuid ?postalAddressUuid;
+           schema:addressCountry ?country;
+           schema:addressLocality ?locality;
+           schema:postalCode ?postalCode;
+           schema:streetAddress ?streetAddress.
+      }
+    } LIMIT 1`);
 }

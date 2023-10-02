@@ -1,4 +1,4 @@
-import { selectAccountBySession } from "../queries/select";
+import { selectAccountBySession, selectAccountInfo } from "../queries/select";
 import parseResults from "../utils/parse-results";
 
 export default async function current(req, res) {
@@ -6,7 +6,7 @@ export default async function current(req, res) {
 
   // find accountURI for this session
   const result = await selectAccountBySession(sessionUri);
-  const { accountUri } = parseResults(result);
+  const { accountUri, userGraph } = parseResults(result);
 
   if (!accountUri) return res.status(400).json({
     "errors": [
@@ -18,6 +18,7 @@ export default async function current(req, res) {
   });
 
   const accountId = accountUri.split('/').pop();
+  const accountInfo = (await selectAccountInfo(userGraph)).results.bindings[0];
 
   return res.status(201).json({
     links: {
@@ -26,17 +27,63 @@ export default async function current(req, res) {
     data: {
       type: 'sessions',
       id: sessionUri,
-    },
-    relationships: {
-      account: {
-        links: {
-          related: `/accounts/${accountId}`
-        },
-        data: {
-          type: "accounts",
-          id: accountId
+      relationships: {
+        account: {
+          links: {
+            related: `/accounts/${accountId}`
+          },
+          data: {
+            type: "accounts",
+            id: accountId
+          }
         }
       }
-    }
+    },
+    included: [{
+      // account
+      type: "accounts",
+      id: accountId,
+      attributes: {
+        email: accountInfo.email.value
+      },
+      relationships: {
+        person: {
+          links: null,
+          data: {
+            type: "persons",
+            id: accountInfo.personUuid.value
+          }
+        }
+      }
+    },{
+      // user
+      type: "persons",
+      id: accountInfo.personUuid.value,
+      attributes: {
+        "first-name": accountInfo.firstName.value,
+        "last-name": accountInfo.lastName.value,
+        email: accountInfo.email.value,
+        phone: accountInfo.phone.value,
+      },
+      relationships: {
+        "postal-address": {
+          links: null,
+          data: {
+            type: "postal-addresses",
+            id: accountInfo.postalAddressUuid.value
+          }
+        }
+      }
+    },{
+      type: "postal-addresses",
+      id: accountInfo.postalAddressUuid.value,
+      attributes: {
+        country: accountInfo.country.value,
+        locality: accountInfo.locality.value,
+        "postal-code": accountInfo.postalCode.value,
+        "street-address": accountInfo.streetAddress.value
+      },
+      relationships: { }
+    }]
   });
 }
