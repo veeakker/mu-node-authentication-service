@@ -141,3 +141,22 @@ export function countMatchingPeopleForPersonId({graph, id}) {
       }
     }`);
 }
+
+export function countMatchingPostalAddressesForId({graph, id}) {
+  return query(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX schema: <http://schema.org/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
+
+    SELECT (COUNT (?address) AS ?matchingPostalAddressCount)
+    WHERE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?address
+           a schema:PostalAddress;
+           mu:uuid ${sparqlEscapeString(id)}.
+      }
+    }`);
+}

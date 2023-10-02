@@ -1,7 +1,7 @@
 import { app } from 'mu';
 import login from './routes/login';
 import register from './routes/register';
-import { updatePerson } from './routes/update';
+import { updatePerson, updatePostalAddress } from './routes/update';
 import current from './routes/current';
 import logout from './routes/logout';
 import deleteCurrentAccount from './routes/deleteCurrentAccount';
@@ -39,6 +39,7 @@ const use = fn => (req, res, next) => {
 };
 
 app.patch('/people/*', use(updatePerson));
+app.patch('/postal-addresses/*', use(updatePostalAddress));
 app.post('/sessions', use(login));
 app.post('/accounts', use(register));
 app.post('/sessions', use(login));

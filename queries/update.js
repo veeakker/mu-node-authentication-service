@@ -97,3 +97,41 @@ export async function updatePerson( graph, {id, email, phone, firstName, lastNam
       }
     }`);
 }
+
+export async function updatePostalAddress( graph, { id, country, locality, postalCode, streetAddress }) {
+  return update(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX account: <http://mu.semte.ch/vocabularies/account/>
+    PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+    PREFIX schema: <http://schema.org/>
+    PREFIX veeakker: <http://veeakker.be/vocabularies/shop/>
+
+    DELETE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?postalAddress
+           schema:addressCountry ?country;
+           schema:addressLocality ?locality;
+           schema:postalCode ?postalCode;
+           schema:streetAddress ?streetAddress.
+      }
+    } INSERT {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?postalAddress
+           schema:addressCountry ${sparqlEscapeString(country)};
+           schema:addressLocality ${sparqlEscapeString(locality)};
+           schema:postalCode ${sparqlEscapeString(postalCode)};
+           schema:streetAddress ${sparqlEscapeString(streetAddress)}.
+      }
+    } WHERE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?postalAddress
+           a schema:PostalAddress;
+           mu:uuid ${sparqlEscapeString(id)};
+           schema:addressCountry ?country;
+           schema:addressLocality ?locality;
+           schema:postalCode ?postalCode;
+           schema:streetAddress ?streetAddress.
+      }
+    }`);
+}
