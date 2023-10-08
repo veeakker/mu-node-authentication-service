@@ -3,6 +3,7 @@ import { ACCOUNT_INACTIVE_STATUS } from '../config';
 import { createSession } from '../queries/create';
 import { selectAccountByEmail } from '../queries/select';
 import parseResults from '../utils/parse-results';
+import responseFromCurrent from './current';
 
 const validEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -69,28 +70,6 @@ export default async function login(req, res){
   //Create new session in db
   await createSession(accountUri, req.headers['mu-session-id']);
   
-  const sessionId = req.headers['mu-session-id'].split('/').pop();
-  const accountId = accountUri.split('/').pop();
-  
-  res.set('mu-auth-allowed-groups', 'CLEAR');
-  return res.status(201).json({
-    links: {
-      self: req.headers['x-rewrite-url'] + '/' + accountId
-    },
-    data: {
-      type: 'sessions',
-      id: sessionId,
-    },
-    relationships: {
-      account: {
-        links: {
-          related: `/accounts/${accountId}`
-        },
-        data: {
-          type: "accounts",
-          id: accountId
-        }
-      }
-    }
-  });
+  // Same response as current (will re-fetch);
+  return await responseFromCurrent(req,res);
 }
