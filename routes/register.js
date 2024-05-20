@@ -83,6 +83,8 @@ export default async function register(req, res){
       passwordHash, personId, accountId, email, firstName, lastName, streetAddress, locality, postal, phone, postalAddressId
     );
 
+    res.set('mu-auth-allowed-groups', 'CLEAR');
+
     return res.status(201).json({
       links: {
         self: req.headers['x-rewrite-url'] + '/' + accountId

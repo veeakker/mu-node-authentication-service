@@ -12,5 +12,7 @@ export default async function deleteCurrentAccount(req, res) {
   // When deleting an account, the account status gets set to 'inactive'
   await updateAccountStatus(accountUri, ACCOUNT_INACTIVE_STATUS);
 
+  res.set('mu-auth-allowed-groups', 'CLEAR');
+
   return res.sendStatus(204);
 }

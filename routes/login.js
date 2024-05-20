@@ -70,6 +70,8 @@ export default async function login(req, res){
   //Create new session in db
   await createSession(accountUri, req.headers['mu-session-id']);
   
+  res.set('mu-auth-allowed-groups', 'CLEAR');
+
   // Same response as current (will re-fetch);
   return await responseFromCurrent(req,res);
 }
