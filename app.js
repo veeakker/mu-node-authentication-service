@@ -42,7 +42,6 @@ app.patch('/people/*', use(updatePerson));
 app.patch('/postal-addresses/*', use(updatePostalAddress));
 app.post('/sessions', use(login));
 app.post('/accounts', use(register));
-app.post('/sessions', use(login));
 app.get('/sessions/current', use(current));
 app.delete('/sessions/current', use(logout));
 app.delete('/accounts/current', use(deleteCurrentAccount));
